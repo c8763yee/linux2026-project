@@ -4,8 +4,6 @@
 LOG_BRANCH="history"
 REMOTE_NAME="origin"
 TEMP_INDEX_FILE=".git/temp_snap"
-
-source ~/.env
 # =========================================
 
 cd "$(dirname "$0")" || exit
