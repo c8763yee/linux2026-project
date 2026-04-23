@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SCRIPT_PATH="$PWD/auto_log_push.sh"
+CRON_ENTRY="*/10 * * * * $SCRIPT_PATH"
+MARKER="# auto_log_push"
+
+[ -f "$SCRIPT_PATH" ] || exit 0
+
+chmod +x "$SCRIPT_PATH"
+
+( crontab -l 2>/dev/null; : ) | grep -qF "$MARKER" && exit 0
+
+( crontab -l 2>/dev/null; echo ""; echo "$CRON_ENTRY $MARKER" ) | crontab -
