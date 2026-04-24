@@ -463,16 +463,14 @@ return pv->refaulted < MIN_LRU_BATCH ||
 **`get_tier_idx()`——決定保護到第幾 tier**
 
 ```c
-read_ctrl_pos(lruvec, type, 0, 1, &sp);
+read_ctrl_pos(lruvec, type, 0, 2, &sp);
 for (tier = 1; tier < MAX_NR_TIERS; tier++) {
-    read_ctrl_pos(lruvec, type, tier, 2, &pv);
+    read_ctrl_pos(lruvec, type, tier, 3, &pv);
     if (!positive_ctrl_err(&sp, &pv))
         break;
 }
 return tier - 1;
 ```
-
-Tier 0 當 SP（`gain=1`），逐層比較更高 tier（`gain=2`）。Gain 比 1:2 是刻意留的 dead zone，防止微小波動觸發保護決策切換。
 
 **`get_type_to_scan()`——決定驅逐 anon 或 file**
 
@@ -484,14 +482,6 @@ type = positive_ctrl_err(&sp, &pv);
 ```
 
 Swappiness 範圍 0-200，兩邊 gain 互補。Swappiness 越高，anon 的 gain 越大，anon 看起來「壞」的門檻越低，越容易被選為驅逐對象。這把使用者可調的單一旋鈕塞進了控制律的加權裡。
-
-### 3.3 為什麼不是完整 PID
-
-- **D 項在 kernel 裡會放大雜訊**。Workload 的瞬間抖動會直接轉成錯誤的保護決策。
-- **純 I 項會 windup**。長時間壓住一側時，累積誤差無限膨脹，workload 翻轉後要很久才能回應。
-- **EWMA 是這兩個問題的正確解答**。帶遺忘的 I 項自動防 windup，不需要 D 的微分。
-
-另外，離散微分 $(e_k - e_{k-1})/T$ 對 $T$ 很敏感，MGLRU 的 $T$ 是 seq 遞增——非均勻取樣。對非均勻時間取微分，結果就是一團雜訊。D 項不存在不是沒人想到，是擋掉了而且擋得有道理。
 
 ## 4. 觀測介面
 
