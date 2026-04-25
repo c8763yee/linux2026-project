@@ -1,7 +1,7 @@
 # MGLRU（Multi-Gen LRU）
 
 使用 LLM 修改與補充原稿內容。
-Assisted-by: claude-opus-4.7
+Assisted-by: claude-opus-4.7-adaptive
 
 ## 前言：為什麼需要 MGLRU
 
