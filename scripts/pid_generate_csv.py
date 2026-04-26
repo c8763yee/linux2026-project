@@ -77,11 +77,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--dt", "-t", type=float, default=0.05, help="Time step (s)")
     parser.add_argument(
-        "--setpoint", "-s", type=float, default=1.0, help="Target value"
+        "--setpoint", "-s", type=float, default=5.0, help="Target value"
     )
-    parser.add_argument("--kp", "-p", type=float, default=2.0, help="Kp")
-    parser.add_argument("--ki", "-i", type=float, default=0.8, help="Ki")
-    parser.add_argument("--kd", "-d", type=float, default=0.1, help="Kd")
+    parser.add_argument("--kp", "-p", type=float, default=4.0, help="Kp")
+    parser.add_argument("--ki", "-i", type=float, default=6.0, help="Ki")
+    parser.add_argument("--kd", "-d", type=float, default=0.2, help="Kd")
     parser.add_argument("--tau", type=float, default=1.2, help="Plant time constant")
     parser.add_argument(
         "--u-min", type=float, default=-10.0, help="Control lower bound"

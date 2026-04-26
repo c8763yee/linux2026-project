@@ -16,13 +16,11 @@ set grid
 set key outside
 
 stats datafile using (abs(column("setpoint"))) name "SP" nooutput
-stats datafile using (abs(column("measurement"))) name "MEAS" nooutput
-stats datafile using (abs(column("error"))) name "ERR" nooutput
-y = (SP_max > MEAS_max) ? SP_max : MEAS_max
-y = (ERR_max > y) ? ERR_max : y
 
-# Clamp ylim to [-10n, 10n) where n = ceil(y / 10)
-yr = (y > 0) ? ceil(y / 10.0) * 10 : 10
+# ylim = [-2k, 2k] where k = 10^floor(log10(setpoint))
+scale = 2
+k = 10**floor(log10(abs(SP_max)))
+yr = scale * k
 set yrange [-yr:yr]
 
 set xlabel "Time (s)"
