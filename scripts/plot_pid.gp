@@ -15,6 +15,16 @@ set multiplot layout 2,1 title "PID Controller Simulation" font ",16"
 set grid
 set key outside
 
+stats datafile using (abs(column("setpoint"))) name "SP" nooutput
+stats datafile using (abs(column("measurement"))) name "MEAS" nooutput
+stats datafile using (abs(column("error"))) name "ERR" nooutput
+y = (SP_max > MEAS_max) ? SP_max : MEAS_max
+y = (ERR_max > y) ? ERR_max : y
+
+# Apply requested style: +- (y // int(y) * 10)
+yr = (int(y) != 0) ? int(y / int(y)) * 10 : 10
+set yrange [-yr:yr]
+
 set xlabel "Time (s)"
 set ylabel "Output"
 plot datafile using "t":"setpoint" with lines lw 2 lc rgb "#1f77b4" title "Setpoint", \
@@ -23,6 +33,7 @@ plot datafile using "t":"setpoint" with lines lw 2 lc rgb "#1f77b4" title "Setpo
 
 set xlabel "Time (s)"
 set ylabel "Control / PID Terms"
+set autoscale y
 plot datafile using "t":"control" with lines lw 2 lc rgb "#9467bd" title "Control u", \
      datafile using "t":"p_term" with lines lw 1.5 lc rgb "#ff7f0e" title "P term", \
      datafile using "t":"i_term" with lines lw 1.5 lc rgb "#17becf" title "I term", \

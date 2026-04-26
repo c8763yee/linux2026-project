@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import sys
 from dataclasses import dataclass
 
 
@@ -74,11 +75,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--duration", type=float, default=20.0, help="Simulation time (s)"
     )
-    parser.add_argument("--dt", type=float, default=0.05, help="Time step (s)")
-    parser.add_argument("--setpoint", type=float, default=1.0, help="Target value")
-    parser.add_argument("--kp", type=float, default=2.0, help="Kp")
-    parser.add_argument("--ki", type=float, default=0.8, help="Ki")
-    parser.add_argument("--kd", type=float, default=0.1, help="Kd")
+    parser.add_argument("--dt", "-t", type=float, default=0.05, help="Time step (s)")
+    parser.add_argument(
+        "--setpoint", "-s", type=float, default=1.0, help="Target value"
+    )
+    parser.add_argument("--kp", "-p", type=float, default=2.0, help="Kp")
+    parser.add_argument("--ki", "-i", type=float, default=0.8, help="Ki")
+    parser.add_argument("--kd", "-d", type=float, default=0.1, help="Kd")
     parser.add_argument("--tau", type=float, default=1.2, help="Plant time constant")
     parser.add_argument(
         "--u-min", type=float, default=-10.0, help="Control lower bound"
@@ -117,7 +120,7 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(rows)
 
-    print(f"Wrote {len(rows)} rows to {args.output}")
+    print(f"Wrote {len(rows)} rows to {args.output}", file=sys.stderr)
 
 
 if __name__ == "__main__":
