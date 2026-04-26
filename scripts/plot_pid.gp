@@ -19,7 +19,7 @@ stats datafile using (abs(column("setpoint"))) name "SP" nooutput
 
 # ylim = [-2k, 2k] where k = 10^floor(log10(setpoint))
 scale = 2
-k = 10**floor(log10(abs(SP_max)))
+k = 10**floor(log10(abs(SP_max > 0 ? SP_max: SP_min)))
 yr = scale * k
 set yrange [-yr:yr]
 
