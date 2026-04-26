@@ -17,10 +17,12 @@ set key outside
 
 stats datafile using (abs(column("setpoint"))) name "SP" nooutput
 
-# ylim = [-2k, 2k] where k = 10^floor(log10(setpoint))
+# ylim = [-yr, yr] with yr = scale * ceil(|sp|/k) * k, k = 10^floor(log10(|sp|))
+# stats already uses abs(setpoint), so SP_max == |sp|
 scale = 2
-k = 10**floor(log10(abs(SP_max > 0 ? SP_max: SP_min)))
-yr = scale * k
+sp = (SP_max > 0) ? SP_max : 1
+k = 10**floor(log10(sp))
+yr = scale * ceil(sp / k) * k
 set yrange [-yr:yr]
 
 set xlabel "Time (s)"
