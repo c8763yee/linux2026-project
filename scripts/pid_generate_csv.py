@@ -73,7 +73,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate PID simulation CSV data")
     parser.add_argument("--output", default="pid_data.csv", help="Output CSV file")
     parser.add_argument(
-        "--duration", type=float, default=20.0, help="Simulation time (s)"
+        "--duration", "--time", type=float, default=20.0, help="Simulation time (s)"
     )
     parser.add_argument("--dt", "-t", type=float, default=0.05, help="Time step (s)")
     parser.add_argument(
