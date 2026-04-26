@@ -21,8 +21,8 @@ stats datafile using (abs(column("error"))) name "ERR" nooutput
 y = (SP_max > MEAS_max) ? SP_max : MEAS_max
 y = (ERR_max > y) ? ERR_max : y
 
-# Apply requested style: +- (y // int(y) * 10)
-yr = (int(y) != 0) ? int(y / int(y)) * 10 : 10
+# Clamp ylim to [-10n, 10n) where n = ceil(y / 10)
+yr = (y > 0) ? ceil(y / 10.0) * 10 : 10
 set yrange [-yr:yr]
 
 set xlabel "Time (s)"
