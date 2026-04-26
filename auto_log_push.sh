@@ -9,20 +9,9 @@ STASH_REF="refs/remote-stash/auto-sync"
 
 cd "$(dirname "$0")" || exit
 
-# --- 1. 同步 uncommitted 變更到 remote ---
-if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null || \
-   [ -n "$(git ls-files --others --exclude-standard)" ]; then
-
-    # 清掉上一次的 stash，避免堆積
-    git stash drop 2>/dev/null || true
-
-    git stash push -u -m "auto-sync"
-    git push "$REMOTE_NAME" "refs/stash:$STASH_REF" --force -q 2>/dev/null
-fi
-
-# --- 2. 快照寫入 history ---
 git fetch "$REMOTE_NAME" "$LOG_BRANCH" -q 2>/dev/null || true
 
+# --- 1. 快照當前工作區（含 uncommitted 變更）寫入 history ---
 export GIT_INDEX_FILE="$TEMP_INDEX_FILE"
 rm -f "$TEMP_INDEX_FILE"
 
@@ -50,16 +39,27 @@ else
 fi
 
 PARENT_TREE=$(git rev-parse --verify --quiet "$PARENT^{tree}" 2>/dev/null)
-[ "$TREE" = "$PARENT_TREE" ] && exit 0
 
-TS=$(date +"%Y-%m-%d %H:%M:%S")
-if [ -n "$PARENT" ]; then
-    C=$(echo "$TS" | git commit-tree "$TREE" -p "$PARENT")
-else
-    C=$(echo "$TS" | git commit-tree "$TREE")
+if [ "$TREE" != "$PARENT_TREE" ]; then
+    TS=$(date +"%Y-%m-%d %H:%M:%S")
+    if [ -n "$PARENT" ]; then
+        C=$(echo "$TS" | git commit-tree "$TREE" -p "$PARENT")
+    else
+        C=$(echo "$TS" | git commit-tree "$TREE")
+    fi
+
+    git update-ref "refs/heads/$LOG_BRANCH" "$C"
+    git update-ref "refs/remotes/$REMOTE_NAME/$LOG_BRANCH" "$C"
+    git push "$REMOTE_NAME" "$LOG_BRANCH" -q > /dev/null 2>&1
 fi
 
-git update-ref "refs/heads/$LOG_BRANCH" "$C"
-git update-ref "refs/remotes/$REMOTE_NAME/$LOG_BRANCH" "$C"
+# --- 2. 同步 uncommitted 變更到 remote（供換機器時還原）---
+if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null || \
+   [ -n "$(git ls-files --others --exclude-standard)" ]; then
 
-git push "$REMOTE_NAME" "$LOG_BRANCH" -q > /dev/null 2>&1
+    git stash drop 2>/dev/null || true
+    git stash push -u -m "auto-sync"
+    git push "$REMOTE_NAME" "refs/stash:$STASH_REF" --force -q 2>/dev/null
+    # stash pop 還原工作區，讓下次快照仍能照到變更
+    git stash pop -q 2>/dev/null
+fi
