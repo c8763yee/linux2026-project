@@ -1,13 +1,31 @@
 #!/bin/bash
 
-SCRIPT_PATH="$PWD/auto_log_push.sh"
-CRON_ENTRY="*/10 * * * * $SCRIPT_PATH"
-MARKER="# auto_log_push"
+REPO_ROOT="$PWD"
+SCRIPT_PATH="$REPO_ROOT/auto_log_push.sh"
+SYNC_PATH="$REPO_ROOT/sync_on_start.sh"
+CRON_MARKER="# auto_log_push"
+AUTOSTART_DIR="$HOME/.config/autostart"
+AUTOSTART_FILE="$AUTOSTART_DIR/auto-sync.desktop"
 
 [ -f "$SCRIPT_PATH" ] || exit 0
-
 chmod +x "$SCRIPT_PATH"
+chmod +x "$SYNC_PATH"
 
-( crontab -l 2>/dev/null; : ) | grep -qF "$MARKER" && exit 0
+# crontab：每 10 分鐘快照
+( crontab -l 2>/dev/null; : ) | grep -qF "$CRON_MARKER" || \
+    ( crontab -l 2>/dev/null; echo ""; echo "*/10 * * * * $SCRIPT_PATH $CRON_MARKER" ) | crontab -
 
-( crontab -l 2>/dev/null; echo ""; echo "$CRON_ENTRY $MARKER" ) | crontab -
+# @reboot：開機同步（非 KDE 機器）
+( crontab -l 2>/dev/null; : ) | grep -qF "sync_on_start" || \
+    ( crontab -l 2>/dev/null; echo "@reboot $SYNC_PATH" ) | crontab -
+
+# KDE Plasma autostart：登入時同步
+if [ -d "$AUTOSTART_DIR" ] || mkdir -p "$AUTOSTART_DIR" 2>/dev/null; then
+    cat > "$AUTOSTART_FILE" << DESKTOP
+[Desktop Entry]
+Type=Application
+Name=auto-sync
+Exec=$SYNC_PATH
+X-KDE-autostart-phase=2
+DESKTOP
+fi

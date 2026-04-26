@@ -4,12 +4,23 @@
 LOG_BRANCH="history"
 REMOTE_NAME="origin"
 TEMP_INDEX_FILE=".git/temp_snap"
-
-source ~/.env
+STASH_REF="refs/remote-stash/auto-sync"
 # =========================================
 
 cd "$(dirname "$0")" || exit
 
+# --- 1. 同步 uncommitted 變更到 remote ---
+if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null || \
+   [ -n "$(git ls-files --others --exclude-standard)" ]; then
+
+    # 清掉上一次的 stash，避免堆積
+    git stash drop 2>/dev/null || true
+
+    git stash push -u -m "auto-sync"
+    git push "$REMOTE_NAME" "refs/stash:$STASH_REF" --force -q 2>/dev/null
+fi
+
+# --- 2. 快照寫入 history ---
 git fetch "$REMOTE_NAME" "$LOG_BRANCH" -q 2>/dev/null || true
 
 export GIT_INDEX_FILE="$TEMP_INDEX_FILE"
@@ -51,4 +62,4 @@ fi
 git update-ref "refs/heads/$LOG_BRANCH" "$C"
 git update-ref "refs/remotes/$REMOTE_NAME/$LOG_BRANCH" "$C"
 
-git push "$REMOTE_NAME" "$LOG_BRANCH" > /dev/null 2>&1
+git push "$REMOTE_NAME" "$LOG_BRANCH" -q > /dev/null 2>&1
