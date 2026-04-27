@@ -33,11 +33,8 @@ I term($\sum_{tier} folio[tier] $): $\alpha=\frac{1}{2}$ 的 EWMA 分別對 refa
 
 - $I_{n} = \alpha \cdot folio + (1-\alpha) \cdot I_{n-1}$
 
-<!--
 問題點：
+
 1. 如何將 MGLRU 形式的 PID Controller 對應到一般形式（或反過來對應）？
 2. 已知微分項會對系統的穩定性和響應速度產生影響，然而 MGLRU 並未使用微分項，其考量為何？
-3. 
-
-
- -->
+3. 對於積分項，其對應的 $K_i$ 又是什麼？
