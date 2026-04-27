@@ -11,7 +11,7 @@ Assisted-by: claude-opus-4.7
 2. **Refault 判斷是二元的**。傳統 LRU 的 refault 只能把 page 放回 active 或 inactive，無法還原它原本的熱度。
 3. **Page table walk 成本高**。傳統 LRU 依賴 rmap 反向掃描，在 page 量大時會退化。
 
-MGLRU 的切入點：**把 active/inactive 二分法換成多世代（generation）結構，並對每個 generation 分別統計 evicted、refaulted，用這些統計量作為回饋訊號**，驅動保護與驅逐決策。。
+MGLRU 的切入點：**把 active/inactive 二分法換成多世代（generation）結構，並對每個 generation 分別統計 evicted、refaulted，用這些統計量作為回饋訊號**，驅動保護與驅逐決策。
 
 程式碼版本以 Linux v7.0 mainline 為準，`mm/vmscan.c`、`mm/workingset.c`、`include/linux/mmzone.h`。
 
