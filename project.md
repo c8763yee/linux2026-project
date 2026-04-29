@@ -35,6 +35,8 @@ I term($\sum_{tier} folio[tier] $): $\alpha=\frac{1}{2}$ 的 EWMA 分別對 refa
 
 - $I_{n} = \alpha \cdot folio + (1-\alpha) \cdot I_{n-1}$
 
+Error term($e(t)$, from `positive_ctrl_err`):
+
 問題點：
 
 1. 如何將 MGLRU 形式的 PID Controller 對應到一般形式（或反過來對應）？
@@ -42,5 +44,6 @@ I term($\sum_{tier} folio[tier] $): $\alpha=\frac{1}{2}$ 的 EWMA 分別對 refa
 3. 對於積分項，其對應的 $K_i$ 又是什麼？是否為 $\frac{1}{2}$ 的 EWMA 參數 $\alpha$？
 
 效能量測指標：
+
 - Page refault rate
 - 整體系統效能（如吞吐量、回應時間等）
