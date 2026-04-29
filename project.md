@@ -33,9 +33,29 @@ P term($K_d$):
 
 I term($\sum_{tier} folio[tier] $): $\alpha=\frac{1}{2}$ 的 EWMA 分別對 refaulted/total page/folio 套用
 
-- $I_{n} = \alpha \cdot folio + (1-\alpha) \cdot I_{n-1}$
+- $I_{n} = \alpha \times folio + (1-\alpha) \times I_{n-1}$
 
 Error term($e(t)$, from `positive_ctrl_err`):
+
+```c
+static bool positive_ctrl_err(struct ctrl_pos *sp, struct ctrl_pos *pv)
+{
+	/*
+	 * Return true if the PV has a limited number of refaults or a lower
+	 * refaulted/total than the SP. (SP - PV > 0)
+	 */
+	return pv->refaulted < MIN_LRU_BATCH ||
+	       pv->refaulted * (sp->total + MIN_LRU_BATCH) * sp->gain <=
+	       (sp->refaulted + 1) * pv->total * pv->gain;
+}
+```
+
+$$
+\begin{aligned}
+e(t) &= SP - PV \\
+     &= \frac{SP_{refaulted}}{SP_{total}} \times SP_{gain} - \frac{PV_{refaulted}}{PV_{total}} \times PV_{gain}
+\end{aligned}
+$$
 
 問題點：
 
