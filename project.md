@@ -54,6 +54,7 @@ $$
 \begin{aligned}
 e(t) &= SP - PV \\
      &= \frac{SP_{refaulted}}{SP_{total}} \times SP_{gain} - \frac{PV_{refaulted}}{PV_{total}} \times PV_{gain}
+     &= \PV_{refaulted} \times SP_{total} \times SP_{gain} - SP_{refaulted} \times PV_{total} \times PV_{gain}
 \end{aligned}
 $$
 
