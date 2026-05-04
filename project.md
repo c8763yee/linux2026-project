@@ -58,12 +58,21 @@ e(t) &= SP - PV \\
 \end{aligned}
 $$
 
-問題點：
+#### 應用情境
+
+- `get_tier_idx`：根據 `refaulted/total` 的比例來決定是否 Protect 這個在 `min_seq` 中特定 `tier` 的 folio
+- `get_type_to_scan`：根據 `swappiness` 的值來決定要 evict Anon/File (對應 0/1) 的 folio
+
+## 問題點：
 
 1. 如何將 MGLRU 形式的 PID Controller 對應到一般形式（或反過來對應）？
 2. 已知微分項會對系統的穩定性和回應速度產生影響，然而 MGLRU 並未使用微分項，其考量為何？
 3. 對於積分項，其對應的 $K_i$ 又是什麼？是否為 $\frac{1}{2}$ 的 EWMA 參數 $\alpha$？
-4. 微分項在 Workload 變化劇烈的情況下可能會產生較大的輸出，這可能會導致系統過度反應或不穩定。MGLRU 是否考慮到這一點，並選擇不使用微分項？
+4. 微分項在 Workload 變化劇烈的情況下可能會產生較大的輸出，這可能會導致系統過度反應或不穩定。
+   - 結果可能是導致 False Positive 與 True Negative 的增加，進而影響整體效能。
+5. 微分項到底要應用在哪個部分？
+   考慮到對於 `get_tier_idx` 的邏輯，或許可以將上次的 ctrl_err 作為對應 tier 的 `last_ctrl_err` 進行微分項的計算，並將其加入到 PID Controller
+   然而對於 `get_type_to_scan` 的邏輯，因為其根據 `swappiness` 的
 
 效能量測指標：
 
