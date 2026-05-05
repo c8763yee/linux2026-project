@@ -55,7 +55,8 @@ $$
 e(t) &= SP - PV \\
      &= \frac{SP_{refaulted}}{SP_{total}} \times SP_{gain} - \frac{PV_{refaulted}}{PV_{total}} \times PV_{gain} \\
      &= PV_{refaulted} \times SP_{total} \times SP_{gain} - SP_{refaulted} \times PV_{total} \times PV_{gain}
-\end{aligned}
+\text{applies}\ \alpha \text{and} \beta \text{from MIN_LRU_BATCH and gain} \\
+	 &= \frac{SP_{total} + \alpha \times SP_{total} \times SP_{gain}}{SP_{total} + \alpha \times SP_{total}} \times SP_{refaulted} - \frac{PV_{total} + \beta \times PV_{total} \times PV_{gain}}{PV_{total} + \beta \times PV_{total}} \times PV_{refaulted}\end{aligned}
 $$
 
 #### 應用情境
@@ -100,3 +101,6 @@ static void reset_ctrl_pos(struct lruvec *lruvec, int type, bool carryover)
 - Page refault rate
 - 整體系統效能（如吞吐量、回應時間等）
 - 啟動 Workload 後的反應速度（TODO：找到能對應到反應速度的指標）
+
+what if:
+$e(t) = \frac{SP_{refaulted}}{SP_{total} \times \Delta SP_{total}} \times SP_{gain} - \frac{PV_{refaulted}}{PV_{total} \times \Delta PV_{total}} \times PV_{gain}$
