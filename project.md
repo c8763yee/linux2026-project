@@ -60,10 +60,13 @@ $$
 
 #### 應用情境
 
-- `get_tier_idx`：根據 `refaulted/total` 的比例來決定是否 Protect 這個在 `min_seq` 中特定 `tier` 的 folio
+- `get_tier_idx`：根據 `refaulted \div total` 的比例來決定是否 Protect 這個在 `min_seq` 中特定 `tier` 的 folio
 - `get_type_to_scan`：根據 `swappiness` 的值來決定要 evict Anon/File (對應 0/1) 的 folio
+
 #### 預計修改
+
 - `mm/vmscan.c`
+
 ```diff
 struct ctrl_pos {
 	unsigned long refaulted;
@@ -77,12 +80,11 @@ static void reset_ctrl_pos(struct lruvec *lruvec, int type, bool carryover)
    			sum = lrugen->avg_total[type][tier] +
 			      lrugen->protected[hist][type][tier] +
 			      atomic_long_read(&lrugen->evicted[hist][type][tier]);
-+        
++
 			WRITE_ONCE(lrugen->avg_total[type][tier], sum / 2);
 }
 
 ```
-
 
 ## 問題點：
 
