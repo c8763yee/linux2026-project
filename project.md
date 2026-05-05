@@ -47,6 +47,7 @@ static bool positive_ctrl_err(struct ctrl_pos *sp, struct ctrl_pos *pv)
 	return pv->refaulted < MIN_LRU_BATCH ||
 	       pv->refaulted * (sp->total + MIN_LRU_BATCH) * sp->gain <=
 	       (sp->refaulted + 1) * pv->total * pv->gain;
+	// \alpha = MIN_LRU_BATCH, \beta = 1
 }
 ```
 
@@ -54,9 +55,10 @@ $$
 \begin{aligned}
 e(t) &= SP - PV \\
      &= \frac{SP_{refaulted}}{SP_{total}} \times SP_{gain} - \frac{PV_{refaulted}}{PV_{total}} \times PV_{gain} \\
-     &= PV_{refaulted} \times SP_{total} \times SP_{gain} - SP_{refaulted} \times PV_{total} \times PV_{gain}
-\text{applies}\ \alpha \text{and} \beta \text{from MIN_LRU_BATCH and gain} \\
-	 &= \frac{SP_{total} + \alpha \times SP_{total} \times SP_{gain}}{SP_{total} + \alpha \times SP_{total}} \times SP_{refaulted} - \frac{PV_{total} + \beta \times PV_{total} \times PV_{gain}}{PV_{total} + \beta \times PV_{total}} \times PV_{refaulted}\end{aligned}
+     &= PV_{refaulted} \times SP_{total} \times SP_{gain} - SP_{refaulted} \times PV_{total} \times PV_{gain} \\
+	%  // apply \alpha and \beta
+	&= PV_{refaulted} \times (SP_{total} + \alpha) \times SP_{gain} - (SP_{refaulted} + \beta) \times PV_{total} \times PV_{gain}
+\end{aligned}
 $$
 
 #### 應用情境
