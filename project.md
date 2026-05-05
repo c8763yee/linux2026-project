@@ -77,6 +77,7 @@ static void reset_ctrl_pos(struct lruvec *lruvec, int type, bool carryover)
    			sum = lrugen->avg_total[type][tier] +
 			      lrugen->protected[hist][type][tier] +
 			      atomic_long_read(&lrugen->evicted[hist][type][tier]);
++        
 			WRITE_ONCE(lrugen->avg_total[type][tier], sum / 2);
 }
 
