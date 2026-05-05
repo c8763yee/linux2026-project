@@ -92,10 +92,9 @@ static void reset_ctrl_pos(struct lruvec *lruvec, int type, bool carryover)
 4. 微分項在 Workload 變化劇烈的情況下可能會產生較大的輸出，這可能會導致系統過度反應或不穩定。
    - 結果可能是導致 False Positive 與 True Negative 的增加，進而影響整體效能。
 5. 微分項到底要應用在哪個部分？
-   考慮到對於 `get_tier_idx` 的邏輯，或許可以將上次的 ctrl_err 作為對應 tier 的 `last_ctrl_err` 進行微分項的計算，並將其加入到 PID Controller
-   然而對於 `get_type_to_scan` 的邏輯，因為其根據 `swappiness` 的
 
 效能量測指標：
 
 - Page refault rate
 - 整體系統效能（如吞吐量、回應時間等）
+- 啟動 Workload 後的反應速度（TODO：找到能對應到反應速度的指標）
