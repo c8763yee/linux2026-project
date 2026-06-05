@@ -1,6 +1,7 @@
 # MGLRU（Multi-Gen LRU）
 
 使用 LLM 修改與補充原稿內容。
+原稿：[MGLRU](https://hackmd.io/i1wuwefJR-SvoPLG1ehtzA)
 Assisted-by: claude-opus-4.7
 
 ## 前言：為什麼需要 MGLRU
